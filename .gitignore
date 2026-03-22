@@ -27,6 +27,12 @@ go.work.sum
 # env file
 .env
 
+# Config file (keep only config.example.yaml)
+config.yaml
+
+# Build output
+classifiler
+
 # Editor/IDE
 # .idea/
 # .vscode/

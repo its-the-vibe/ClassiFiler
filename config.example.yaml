@@ -1,0 +1,32 @@
+redis:
+  host: "localhost"
+  port: 6379
+  # Name of the Redis list to LPOP from (matches SlackFiler's output_list).
+  input_queue: "slack_file_results"
+  # Redis pub/sub channel where classification results are published.
+  output_channel: "classifiler_results"
+
+# Classifiers are evaluated in order; the first match wins.
+# Supported types: filename_regex, default
+classifiers:
+  - name: "images"
+    type: "filename_regex"
+    # Case-insensitive match on common image extensions.
+    pattern: "(?i)\\.(jpg|jpeg|png|gif|bmp|svg|webp)$"
+    target_dir: "/classified/images"
+
+  - name: "documents"
+    type: "filename_regex"
+    # Case-insensitive match on common document extensions.
+    pattern: "(?i)\\.(pdf|doc|docx|xls|xlsx|ppt|pptx|txt|md|csv)$"
+    target_dir: "/classified/documents"
+
+  - name: "archives"
+    type: "filename_regex"
+    pattern: "(?i)\\.(zip|tar|gz|bz2|xz|7z|rar)$"
+    target_dir: "/classified/archives"
+
+  # Default must be last — it matches every file not caught above.
+  - name: "default"
+    type: "default"
+    target_dir: "/classified/other"
