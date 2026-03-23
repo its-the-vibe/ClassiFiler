@@ -1,0 +1,21 @@
+services:
+  classifiler:
+    build: .
+    # Run the container filesystem as read-only for security.
+    read_only: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      # Path to the config file inside the container.
+      CONFIG_PATH: /etc/classifiler/config.yaml
+    volumes:
+      # Mount the config file read-only.
+      - ./config.yaml:/etc/classifiler/config.yaml:ro
+      # Mount the directory where SlackFiler stores downloaded files.
+      # Adjust the host path to match your SlackFiler download directories.
+      - /path/to/downloads:/downloads:rw
+      # Mount the target classification output directories.
+      - /path/to/classified:/classified:rw
+    restart: on-failure:10
