@@ -1,5 +1,7 @@
 # ClassiFiler
 
+[![CI](https://github.com/its-the-vibe/ClassiFiler/actions/workflows/ci.yaml/badge.svg)](https://github.com/its-the-vibe/ClassiFiler/actions/workflows/ci.yaml)
+
 ClassiFiler is a Go service that consumes file-result messages from [SlackFiler](https://github.com/its-the-vibe/SlackFiler), classifies each file using a configurable chain of classifiers, moves it to the appropriate target folder, and publishes the classification result to a Redis pub/sub channel for downstream consumers.
 
 ---
