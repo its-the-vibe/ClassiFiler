@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 
 # ── Build stage ──────────────────────────────────────────────────────────────
-FROM golang:1.26.6 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.26.6-alpine AS builder
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /app
 
@@ -11,15 +14,15 @@ RUN go mod download
 
 # Build a fully static binary.
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o classifiler .
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build -trimpath -ldflags="-s -w" -o /classifiler .
 
-# ── Runtime stage (scratch) ───────────────────────────────────────────────────
-FROM scratch
-
-# Copy CA certificates for TLS connections (e.g., TLS-enabled Redis).
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+# ── Runtime stage (distroless) ────────────────────────────────────────────────
+FROM gcr.io/distroless/static-debian13:nonroot
 
 # Copy the static binary.
-COPY --from=builder /app/classifiler /classifiler
+COPY --from=builder /classifiler /classifiler
+
+USER nonroot:nonroot
 
 ENTRYPOINT ["/classifiler"]
