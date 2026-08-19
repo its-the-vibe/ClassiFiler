@@ -5,7 +5,7 @@ services:
     pull_policy: always
     # Run the container filesystem as read-only for security.
     read_only: true
-    user: "1000:1000"
+    user: "${UID:-65532}:${GID:-65532}"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
